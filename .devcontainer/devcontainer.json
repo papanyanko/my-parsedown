@@ -1,0 +1,37 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/php
+{
+	"name": "PHP",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/devcontainers/php:1-8.2-bookworm",
+	"forwardPorts": [
+		9000
+	],
+	"features": {
+		"ghcr.io/devcontainers-contrib/features/composer:1": {}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"felixfbecker.php-debug",
+				"bmewburn.vscode-intelephense-client"
+			],
+			"settings": {
+				"php.validate.executablePath": "/usr/local/bin/php",
+				"php.debug.executablePath": "/usr/local/bin/php",
+				"php.debug.remoteHost": "host.docker.internal",
+				"php.debug.remotePort": 9000
+			},
+		}
+	},
+	"runArgs": [
+		"--cap-add=SYS_PTRACE",
+		"--security-opt",
+		"seccomp=unconfined"
+	],
+	"postCreateCommand": "composer install && sudo chmod 666 /usr/local/etc/php/conf.d/xdebug.ini && echo xdebug.client_host=host.docker.internal >> /usr/local/etc/php/conf.d/xdebug.ini"
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "sudo chmod a+x \"$(pwd)\" && sudo rm -rf /var/www/html && sudo ln -s \"$(pwd)\" /var/www/html"
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}
