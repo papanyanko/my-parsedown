@@ -147,6 +147,7 @@ class Parsedown
         '`' => array('FencedCode'),
         '|' => array('Table'),
         '~' => array('FencedCode'),
+        '$' => array('LatexMath'),
     );
 
     # ~
@@ -1015,6 +1016,40 @@ class Parsedown
 
         $Block['element']['handler']['argument'] .= "\n" . $Line['text'];
 
+        return $Block;
+    }
+
+    protected function blockLatexMath($Line)
+    {
+        if (preg_match('/^\$\$$/m', $Line['text'])) {
+            return [
+                'char' => '$',
+                'element' => [
+                    'text' => '$$',
+                    'nonNestables' => ['Markup', 'Plugin', 'Element'],
+                ],
+            ];
+        }
+    }
+
+    protected function blockLatexMathContinue($Line, $Block)
+    {
+        if (isset($Block['complete'])) {
+            return;
+        }
+
+        if (preg_match('/^\$\$$/m', $Line['text'])) {
+            $Block['element']['text'] .= '$$';
+            $Block['complete'] = true;
+            return $Block;
+        }
+
+        $Block['element']['text'] .= $Line['body'];
+        return $Block;
+    }
+
+    protected function blockLatexMathComplete($Block)
+    {
         return $Block;
     }
 
